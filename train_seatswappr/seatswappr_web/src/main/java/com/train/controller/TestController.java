@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,9 @@ public class TestController {
     private TestService testService;
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     @RequestMapping("")
     public String test(Model model){
@@ -44,6 +48,15 @@ public class TestController {
         Locale locale = LocaleContextHolder.getLocale();
         r.put("testMessage",messageSource.getMessage("welcome",null,locale));
         return r;
+    }
+
+
+    @RequestMapping("rest")
+    @ResponseBody
+    public String rest(){
+        String url = "https://www.baidu.com";
+        String json = restTemplate.getForEntity(url, String.class).getBody();
+        return json;
     }
 
 }
