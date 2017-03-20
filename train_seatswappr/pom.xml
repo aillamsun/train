@@ -18,8 +18,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javadoc.opts>-Xdoclint:none</javadoc.opts>
+    <docker.repostory>registry.cn-hangzhou.aliyuncs.com</docker.repostory>
+    <docker.registry.name>train</docker.registry.name>
 
     <jdk.version>1.7</jdk.version>
     <spring.version>4.3.4.RELEASE</spring.version>
@@ -48,6 +49,11 @@
     <apache.common.logging.version>1.2</apache.common.logging.version>
     <apache.common.fileupload.version>1.3.1</apache.common.fileupload.version>
     <apache.common.codec.version>1.10</apache.common.codec.version>
+
+
+    <docker.image.prefix>train</docker.image.prefix>
+    <!--<docker.plugin.version>0.4.11</docker.plugin.version>-->
+    <docker.plugin.version>0.4.13</docker.plugin.version>
 
   </properties>
 
@@ -113,7 +119,6 @@
         <version>1.2.12</version>
       </dependency>
     </dependencies>
-
   </dependencyManagement>
 
 
@@ -150,6 +155,14 @@
   </dependencies>
 
 
+  <developers>
+    <developer>
+      <id>sungang</id>
+      <name>sunagng</name>
+      <email>1120sungang@gmail.com</email>
+    </developer>
+  </developers>
+
   <build>
     <plugins>
       <plugin>
@@ -169,6 +182,65 @@
           <skip>true</skip>
         </configuration>
       </plugin>
+
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.17</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <configuration>
+              <configLocation>checkstyle.xml</configLocation>
+              <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+              <encoding>UTF-8</encoding>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+            </configuration>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <linkXRef>false</linkXRef>
+        </configuration>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <effort>Max</effort>
+          <threshold>Low</threshold>
+          <xmlOutput>true</xmlOutput>
+          <findbugsXmlOutputDirectory>${project.build.directory}/findbugs
+          </findbugsXmlOutputDirectory>
+          <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.9.4</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>
