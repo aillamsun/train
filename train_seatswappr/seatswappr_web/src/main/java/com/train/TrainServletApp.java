@@ -28,18 +28,4 @@ public class TrainServletApp extends SpringBootServletInitializer {
         app.run(args);
     }
 
-    /**
-     * springboot处理session时间周期
-     * @return
-     */
-    @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer(){
-        return new EmbeddedServletContainerCustomizer() {
-            @Override
-            public void customize(ConfigurableEmbeddedServletContainer container) {
-                container.setSessionTimeout(1800);//单位为S
-            }
-        };
-    }
-
 }

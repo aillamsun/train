@@ -1,7 +1,13 @@
 package com.train.config;
 
+import com.train.config.https.TomcatSslConnectorProperties;
+import org.apache.catalina.connector.Connector;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -13,13 +19,15 @@ import java.util.List;
  * Created by sungang on 2016/12/15.
  */
 @Configuration
+@PropertySource("classpath:tomcat.https.properties")
+@EnableConfigurationProperties(TomcatSslConnectorProperties.class)
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+//    }
 
 
     /**
@@ -62,5 +70,19 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
         multipartResolver.setMaxUploadSize(1000000);
         return multipartResolver;
+    }
+
+
+    @Bean
+    public EmbeddedServletContainerFactory servletContainer(TomcatSslConnectorProperties properties) {
+        TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+        tomcat.addAdditionalTomcatConnectors(createSslConnector(properties));
+        return tomcat;
+    }
+
+    private Connector createSslConnector(TomcatSslConnectorProperties properties) {
+        Connector connector = new Connector();
+        properties.configureConnector(connector);
+        return connector;
     }
 }

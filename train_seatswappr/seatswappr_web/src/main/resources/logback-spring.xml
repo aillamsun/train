@@ -5,7 +5,7 @@
     <jmxConfigurator/>
 
     <!-- 定义日志文件 输入位置 -->
-    <property name="log_dir" value="/Users/sungang/Documents/logs/member"/>
+    <property name="log_dir" value="/Users/sungang/Documents/logs/seatwappr"/>
     <!-- 日志最大的历史 30天 -->
     <property name="maxHistory" value="30"/>
     <springProfile name="dev">
@@ -206,7 +206,7 @@
 
 
     <logger name="org.springframework.web" level="INFO"/>
-    <logger name="com.chinawiserv.member" level="DEBUG"/>
+    <logger name="com.train" level="DEBUG"/>
 
 
     <!-- root级别   DEBUG -->
