@@ -119,15 +119,35 @@
     </dependencies>
 
 
+
+    <!-- 环境设置 -->
+    <profiles>
+        <profile>
+            <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <active.profile>dev</active.profile>
+            </properties>
+        </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+                <active.profile>prod</active.profile>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>**/Dockerfile</include>
-                </includes>
-                <targetPath>../docker</targetPath>
+                <!--<includes>-->
+                    <!--<include>**/Dockerfile</include>-->
+                <!--</includes>-->
+                <!--<targetPath>../docker</targetPath>-->
             </resource>
         </resources>
 
@@ -168,67 +188,86 @@
                 </configuration>
             </plugin>
 
+            <!-- 代码 安全 -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-gpg-plugin</artifactId>-->
+                <!--<version>1.0</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>sign-artifacts</id>-->
+                        <!--<phase>verify</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>sign</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
 
             <!-- tag::plugin[] -->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>${docker.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>tag-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tag</goal>
-                        </goals>
-                        <configuration>
-                            <image>${docker.registry.name}/${project.artifactId}:${project.version}</image>
-                            <newName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${project.version}</newName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>push-image</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                            <imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${project.version}</imageName>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-
+            <!--<plugin>-->
+                <!--<groupId>com.spotify</groupId>-->
+                <!--<artifactId>docker-maven-plugin</artifactId>-->
+                <!--<version>${docker.plugin.version}</version>-->
+                <!--<executions>-->
+                    <!--在mvn package阶段执行docker的构建-->
+                    <!--<execution>-->
+                        <!--<id>build-image</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>build</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                    <!--在构建完成之后push到registry-->
+                    <!--<execution>-->
+                        <!--<id>tag-image</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>tag</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<image>${docker.registry.name}/${project.artifactId}:${project.version}</image>-->
+                            <!--<newName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${project.version}</newName>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                    <!--在构建完成之后push到registry-->
+                    <!--<execution>-->
+                        <!--<id>push-image</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>push</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}:${project.version}</imageName>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<configuration>-->
                     <!-- 私有仓库配置，需要settings.xml文件配合serverId对应的服务地址 -->
-                    <serverId>docker-aliyun</serverId>
-                    <registryUrl>registry.cn-hangzhou.aliyuncs.com</registryUrl>
-                    <!-- <forceTags>true</forceTags> -->
+                    <!--<serverId>docker-aliyun</serverId>-->
+                    <!--<registryUrl>registry.cn-hangzhou.aliyuncs.com</registryUrl>-->
+                     <!--<forceTags>true</forceTags>-->
                     <!--install阶段也上传，否则只有deploy阶段上传-->
                     <!--如果<pushImage>false</pushImage>则install阶段将不提交Docker镜像，只有maven的deploy阶段才提交-->
-                    <pushImage>true</pushImage>
+                    <!--<pushImage>true</pushImage>-->
                     <!--${docker.image.prefix}/${project.artifactId}-->
-                    <imageName>
-                        ${docker.repostory}/${docker.registry.name}/${project.artifactId}:${project.version}
-                    </imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <imageTags>
+                    <!--<imageName>-->
+                        <!--${docker.repostory}/${docker.registry.name}/${project.artifactId}:${project.version}-->
+                    <!--</imageName>-->
+                    <!--<dockerDirectory>src/main/docker</dockerDirectory>-->
+                    <!--<imageTags>-->
                         <!--docker的tag为项目版本号、latest-->
                         <!--<imageTag>${git.commit.id.abbrev}</imageTag>-->
-                        <imageTag>latest</imageTag>
-                    </imageTags>
+                        <!--<imageTag>latest</imageTag>-->
+                    <!--</imageTags>-->
                     <!-- 将打包文件放入dockerDirectory指定的位置 -->
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
+                    <!--<resources>-->
+                        <!--<resource>-->
+                            <!--<targetPath>/</targetPath>-->
+                            <!--<directory>${project.build.directory}</directory>-->
+                            <!--<include>${project.build.finalName}.jar</include>-->
+                        <!--</resource>-->
                         <!-- 输出Dockerfile至docker文件夹,如果不使用占位符,可使用以下配置 -->
                         <!--
                         <resource>
@@ -240,29 +279,12 @@
                             <targetPath>../docker</targetPath>
                         </resource>
                         -->
-                    </resources>
-                </configuration>
-            </plugin>
+                    <!--</resources>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <!-- end::plugin[] -->
         </plugins>
     </build>
 
-    <!-- 环境设置 -->
-    <profiles>
-        <profile>
-            <id>development</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <active.profile>dev</active.profile>
-            </properties>
-        </profile>
-        <profile>
-            <id>production</id>
-            <properties>
-                <active.profile>prod</active.profile>
-            </properties>
-        </profile>
-    </profiles>
+
 </project>
